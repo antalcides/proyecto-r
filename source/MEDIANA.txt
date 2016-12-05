@@ -1,0 +1,24 @@
+MEDIANA<-function(X)    #Crea una función llamada MEDIANA#
+{ y<-scan(X)            #Lee los datos#
+  n<-length(y)          #Crea una variable n igual a longitud del vector de datos#
+  i<-1                  #Crea un contador que va desde la primera observación#
+while (i<=(n-1))        #Sigue el procedimiento hasta la penúltima observación#
+if(y[i]<y[i+1])         #Si la observación anterior es menor que la siguiente#
+{  a<-y[i+1]		#Crea una variable a igual a la obsevación siguiente#   
+b<-y[i]                 #Crea una variable b igual a la observación anterior#
+y[i]<-a                 #Cambia la posición de las observaciones#
+y[i+1]<-b               
+i<-1}                   #Reinicia el proceso#
+else                    #De lo contrario#
+i<-i+1                  #El contador continua #
+y                       #Imprime el vector y ordenado de manera descendente#
+if (n%%2==0)            #Si el vector de observaciones ordenadas es de longitud par# 
+{ c<-y[(n/2)+1]         #Crea las variables c y d iguales a las observaciones centrales# 
+  d<-y[(n/2)]            
+  mediana<-((c+d)/2)}   #MEDIANA:PromediO DE los valores de las observaciones centrales# 
+  
+else                    #De lo contrario#
+  mediana<-y[(n/2)+1]   #MEDIANA: es el valor central#
+  y 
+  mediana	        #Imprime la mediana#
+  }

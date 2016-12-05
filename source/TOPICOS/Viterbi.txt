@@ -1,0 +1,52 @@
+#ALGORITMO DE VITERBI- DAIRA LUZ VELANDIA MUÑOZ#
+
+
+#INGRESO DE PARÁMETROS#
+
+v<-c(1,2,3,4)				#Vector de observaciones#
+E<-5					#Número de estados#
+a<-c(1/5,1/15,3/10,1/10,1/5)		#Se ingresan los cinco vectores que formarán la matriz de transición de probabilidades#
+b<-c(1/5,2/15,1/10,2/5,1/5)
+c<-c(1/5,8/15,1/5,3/20,1/5)
+d<-c(1/5,1/5,1/10,3/10,1/5)
+e<-c(1/5,1/15,3/10,1/10,1/5)
+A<-cbind(a,b,c,d,e)			#Matriz de transición de probabilidades#
+PI1<-1/2				#Probabilidad de ocurrencia del estado i en el tiempo 1#
+B<-solve(t(diag(E)-A+1),rep(1,E))	#Matriz de probabilidad de las observaciones#
+
+
+
+#INICIALIZACIÓN#
+
+n<-length(v)				#Longitud del vector de observaciones#
+prob<-outer(v,PI1,dpois)		#Probabilidad de ocurrencia de cada observación dada la densidad de probabilidad y PI1#
+Dmin<-matrix(0,n,E)			#Se construye un objeto con elementos cero para ingresar los elementos de la matriz de distancias mínimas de tamaño nXE#
+C<-B*prob[1,]				#Se calcula b(y(t)/i)*b(y(1))#			
+sumC<-sum(C)				#Se calcula la probabilidad de obtener la primera observación dado que se está en el estado i, es decir, b(y(1)/i)# 
+lsumC<-log(sumC)			#Se calcula el logaritmo de b(y(1)/i)#
+D<-C/sumC				#Se calcula P(X_(1)=i), es decir, la probabilidad de ocurrencia del estado i en el instante 1#
+Dmin[1,]<-log(D)-lsumC			#Se calcula log[P(X_(1)=i)]-log[b(y(1)/i)] y se ingresan los valores en la primera fila de Dmin#
+
+
+
+#RECURSIÓN#					
+
+for(i in 2:n)				#Se crea un contador i que va desde 2 hasta la longitud del vector de observaciones#
+{
+E<-D%*%A*prob[i,]			#Se calcula la probabilidad de obtener cada observación dado que está en el estado i#  
+sumE <- sum(E)				#Se calcula b(y(i)/i), es decir, la probabilidad de obtener las i observaciones dado que está en el estado i#
+F <- lsumC+log(sumE)         		#Se adicionan log[b(y(1)/i] y log (b(y(i)/i), es decir, se suman el logaritmo de la probabilidad de obtener la primera observación dado que está en el estado i y el logaritmo de la probabilidad de obtener las i observaciones dado que está en el estado i#
+G <- E/sumE				#Se calcula b(y(i)/i)#
+Dmin[i,]<-(-log(G))+F			#Se calcula{Dmin(t-1,isub(t-1))-log a(isub(t)/isub(t-1))-log b(y(t)/i sub(t)}#
+
+#FINAL#
+it<-numeric(n)				#Se crea el objeto it de clase numérica, es decir, un vector de n componentes iguales a cero#
+it[n]<-which.min(Dmin[n,])		#Se busca el estado que da la mínima distancia de las distancias mínimas en el último instante#
+for (i in (n-1):1)			#Se crea un contador i que va desde 1 hasta la longitud del vector de observaciones menos 1, es decir, desde el primer hasta el penúltimo instante# 	
+{it[i]<-which.min(A[,it[i+1]]*Dmin[i,]) #Se busca la secuencia de estados que da la minima distancia de las distancias mínimas desde el primer hasta el penúltimo instante# 
+}
+}
+it					#Da la secuencia de estados más probable que ha generado la secuencia de observaciones#
+
+ 
+
